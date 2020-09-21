@@ -1,4 +1,4 @@
-import code_826 as s
+import frequencyMapFunctions as s
 import matplotlib.pyplot as plt
 import os
 import pandas as pd

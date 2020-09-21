@@ -1,4 +1,4 @@
-import codeStability as s
+import tabilityFunctions as s
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
