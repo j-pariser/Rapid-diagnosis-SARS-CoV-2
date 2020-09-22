@@ -495,9 +495,11 @@ def plotConcentration(averages, concentrations, electrodeNames,frequency):
     plt.figure()  # creates figure
     plt.rcParams['ytick.labelsize'] = 24
     plt.rcParams['xtick.labelsize'] = 24
-    # print(dfy)
-    plt.plot(concentrations, dfy, marker = 'o', markersize = '12', linestyle = '', color='m', markeredgecolor='k', markeredgewidth=1.0)  # plots graph
-    plt.errorbar(concentrations, dfy, yerr = error, ecolor = 'k', linestyle = '', capsize = 3)
+
+    colormap = plt.cm.plasma(.75) # adds a color map
+    plt.plot(concentrations, dfy, marker = 'o', markersize = '12', linestyle = '', color = colormap, markeredgecolor='k', markeredgewidth=1.0)  # plots graph
+    # plt.errorbar(concentrations, dfy, yerr = error, ecolor = 'k', linestyle = '', capsize = 3) # creates error bars
+    plt.fill_between(concentrations, np.array(dfy)-np.array(error), np.array(dfy)+np.array(error), color=colormap, alpha=.2)
     plt.xlabel('Concentration S1 (fg/mL)', fontsize = '18')
     plt.ylabel('Normalized change in signal (%)', fontsize = '18')  # gives y-label for bar graph
     #plt.ylabel('Change normalized to 1 fg/mL (%)', fontsize='30')  # gives y-label for bar graph
