@@ -2,10 +2,10 @@ import concentrationCurveFunctions as s
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
+
 pd.set_option('display.width', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
-
 
 # Settings '1_15','1_19','1_20','1_21'
 electrodeNames = ['1_13','1_17','1_18']
