@@ -275,8 +275,8 @@ def plotFreqNOverlay(normA, freq_listA, normB, freq_listB):
     plt.rcParams['ytick.labelsize'] = 24
     plt.rcParams['xtick.labelsize'] = 24
 
-    n = 2
-    colors = plt.cm.plasma(np.linspace(0, .65, n))
+    n = 2  # n is a variable for total number of plots
+    colors = plt.cm.plasma(np.linspace(0, .65, n))  # colormap
 
     rA, cA = normA.shape
     averagesA = stats(normA)
