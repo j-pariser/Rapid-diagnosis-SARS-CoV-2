@@ -248,9 +248,13 @@ def plotFreqN(norm, freq_list,electrodeNames):
     plt.title('Change in Signal After S1', fontsize='28')
     plt.xlabel('Frequency (Hz)', fontsize='24')
     plt.ylabel('Normalized Change (%)', fontsize='24')
+
+    n = len(freq_list)  # variable 'n' is for the number of electrodes graphed
+    colors = plt.cm.plasma(np.linspace(0 , 1, n)) # creates the color map and assigns an array to 'colors'
+
     for i in list(range(r)):
         print(i)
-        plt.plot(freq_list, norm.loc[i], marker = 'o', linestyle = '-', linewidth=2, markersize =8)
+        plt.plot(freq_list, norm.loc[i], marker = 'o', linestyle = '-', linewidth=2, markersize =8, color=colors[i])
     plt.plot(freq_list, zero, linestyle='--', marker='', color='lightgray')
     plt.legend(electrodeNames, fontsize = '18')
 
@@ -267,9 +271,12 @@ def plotFreqN(norm, freq_list,electrodeNames):
 
 
 def plotFreqNOverlay(normA, freq_listA, normB, freq_listB):
-    legend_names = ['CSF','S1']
+    legend_names = ['CSF','S1']  # replace concentrations here
     plt.rcParams['ytick.labelsize'] = 24
     plt.rcParams['xtick.labelsize'] = 24
+
+    n = 2
+    colors = plt.cm.plasma(np.linspace(0, .65, n))
 
     rA, cA = normA.shape
     averagesA = stats(normA)
@@ -278,8 +285,9 @@ def plotFreqNOverlay(normA, freq_listA, normB, freq_listB):
     avgsA = averagesA.iloc[0, :]
     stdA = averagesA.iloc[1, :]
     plt.figure()
-    plt.plot(freq_listA, avgsA, marker='o', linewidth = 2, color = 'fuchsia', markersize = 6)
-    plt.errorbar(freq_listA, avgsA, yerr=stdA, ecolor='fuchsia', linestyle='', capsize=5, linewidth = 3)
+    plt.plot(freq_listA, avgsA, marker='o', linewidth = 2, color = colors[0], markersize = 6)
+    # plt.errorbar(freq_listA, avgsA, yerr=stdA, ecolor='fuchsia', linestyle='', capsize=5, linewidth = 3)  # adds error bars
+    plt.fill_between(freq_listA, avgsA-stdA, avgsA+stdA, color=colors[0], alpha=.3)  # adds shaded area for error
 
     rB, cB = normB.shape
     averagesB = stats(normB)
@@ -287,8 +295,9 @@ def plotFreqNOverlay(normA, freq_listA, normB, freq_listB):
     print('\nAveraged S1\n',averagesB)
     avgsB = averagesB.iloc[0, :]
     stdB = averagesB.iloc[1, :]
-    plt.plot(freq_listB, avgsB, marker='o', linewidth = '2', color = 'k', markersize = 6)
-    plt.errorbar(freq_listB, avgsB, yerr=stdB, ecolor='k', linestyle='', capsize=5, linewidth=3)
+    plt.plot(freq_listB, avgsB, marker='o', linewidth = '2', color = colors[1], markersize = 6)
+    # plt.errorbar(freq_listB, avgsB, yerr=stdB, ecolor='k', linestyle='', capsize=5, linewidth=3)  # adds error bars
+    plt.fill_between(freq_listB, avgsB-stdB, avgsB+stdB, color=colors[1], alpha=0.2)  # adds shaded area for error
 
     # rC, cC = normC.shape
     # averagesC = stats(normC)

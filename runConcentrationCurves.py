@@ -12,7 +12,7 @@ pd.set_option('display.max_rows', None)
 # Settings '1_15','1_19','1_20','1_21'
 electrodeNames = ['1_13','1_17','1_18']
 dataType = 'SWV'
-frequency = '_10Hz' # Must include underscore before number
+frequency = '_75Hz' # Must include underscore before number
 experimentConditions = ['0 S1','0.05 fg/mL S1','0.1 fg/mL S1', '0.5 fg/mL S1', '1 fg/mL S1', '5 fg/mL S1', '10 fg/mL S1', '50 fg/mL S1', '100 fg/mL S1']
 labels = [0,0.05, 0.1, 0.5, 1,5, 10, 50,100]
 save = False
