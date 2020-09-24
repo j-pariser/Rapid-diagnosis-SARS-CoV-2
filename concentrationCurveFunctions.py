@@ -9,6 +9,7 @@ import os
 from scipy.signal import argrelmin
 from scipy.signal import savgol_filter
 import scipy
+import math
 
 
 """
@@ -402,16 +403,17 @@ def peaks(filesList, electrodeFolder, method1, fraction1, method2, fraction2):
       #  baseVal = baseline[newPeakHeightInd].values[0]
       #  newPeakHeight = newPeakHeight - baseVal
 
-       plt.figure()
-       plt.title('%s Data' % filename)
-       plt.xlabel('Vfwd [V]')
-       plt.ylabel('Idif [A]')
-       plt.plot(newX, smoothY)
-       plt.plot(val1x, val1, marker='.')
-       plt.plot(val2x, val2, marker='.')
-       plt.plot(newX, baseline, linestyle='--')
-       plt.plot(newX[newPeakHeightInd], smoothY[newPeakHeightInd], '*')
-       plt.annotate(newPeakHeight, (newX[newPeakHeightInd], smoothY[newPeakHeightInd]))
+       # ---------------uncomment to show baselines--------------------------
+       # plt.figure()
+       # plt.title('%s Data' % filename)
+       # plt.xlabel('Vfwd [V]')
+       # plt.ylabel('Idif [A]')
+       # plt.plot(newX, smoothY)
+       # plt.plot(val1x, val1, marker='.')
+       # plt.plot(val2x, val2, marker='.')
+       # plt.plot(newX, baseline, linestyle='--')
+       # plt.plot(newX[newPeakHeightInd], smoothY[newPeakHeightInd], '*')
+       # plt.annotate(newPeakHeight, (newX[newPeakHeightInd], smoothY[newPeakHeightInd]))
 
        nA = round(newPeakHeight * (10 ** 9), 3)
        peakHeights.append(nA)
@@ -432,6 +434,7 @@ def normalize(df_peaks,referenceMeasurement,experimentConditions):
         reference = np.array(df_peaks.iloc[:, referenceMeasurement])
         currentRow = np.array(df_peaks.iloc[:, counter])
         normalVal = ((currentRow - reference) / reference)*100  # Normalization Calculation
+        normalVal = abs(normalVal)  # changes all values to non-negative
         normal_pks.append((np.around(normalVal, 3)))  # Add normalized value to array
         counter += 1
     normal_pks = np.array(normal_pks).transpose()  # Switch rows and columns for proper dataframe size
@@ -456,7 +459,7 @@ def stats(df_peaks):
 
     data = [avg, std]
     averages = pd.DataFrame(data, columns = objects)
-    return averages
+    return averages  # returns a dataframe
 
 """
 plotSignalStability: Plots normalized signal change per measurement for multiple electrodes
@@ -487,7 +490,9 @@ x-axis: 0 , 10^-6, 10^-5, 10^-4, 10^-3, 10^-2, 10^-1, 10^0 concentration
 what if just had the log space equal, but then renamed them?
 """
 def plotConcentration(averages, concentrations, electrodeNames,frequency):
-    # print(averages)
+    print('-'*len('Inside plotConcentration') + "\nInside plotConcentration\n" + '-'*len('Inside plotConcentration'))
+    print('\naverages:\n',averages, '\n')
+    print('concentrations: ',concentrations, '\n')
     objects = list(averages.columns)  # gets column names
     dfy = list(averages.iloc[0, :])  # access row 1 of the data frame (the peak heights)
     error = list(averages.iloc[1, :])
@@ -496,19 +501,27 @@ def plotConcentration(averages, concentrations, electrodeNames,frequency):
     plt.rcParams['ytick.labelsize'] = 24
     plt.rcParams['xtick.labelsize'] = 24
 
-    colormap = plt.cm.plasma(.75) # adds a color map
+    colormap = plt.cm.plasma(.75) # change color map here!
     plt.plot(concentrations, dfy, marker = 'o', markersize = '12', linestyle = '', color = colormap, markeredgecolor='k', markeredgewidth=1.0)  # plots graph
     # plt.errorbar(concentrations, dfy, yerr = error, ecolor = 'k', linestyle = '', capsize = 3) # creates error bars
     plt.fill_between(concentrations, np.array(dfy)-np.array(error), np.array(dfy)+np.array(error), color=colormap, alpha=.2)
     plt.xlabel('Concentration S1 (fg/mL)', fontsize = '18')
     plt.ylabel('Normalized change in signal (%)', fontsize = '18')  # gives y-label for bar graph
     #plt.ylabel('Change normalized to 1 fg/mL (%)', fontsize='30')  # gives y-label for bar graph
-    plt.title('Change in Signal at %s (n=3)' %frequency, fontsize='28', fontweight = 'bold')  # display title
+    plt.title('Change in Signal at %s (n=3) {for electrodes 13, 17, 18}' %frequency, fontsize='28', fontweight = 'bold')  # display title
     #plt.legend(conditions, fontsize = '16')
-    plt.xscale('symlog', linthresh=1e-1, subs=[2, 3, 4, 5, 6, 7, 8, 9])
-    plt.xlim(-0.01, 150)
+    # plt.xscale('symlog', linthresh=1e-1, subs=[2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
     # plt.yticks(np.arange(0,90,10))
-    #plt.xlim(0.75, 15000)
+    # plt.xlim(0.75, 15000)
+    plt.xlim(-0.01, 150)
+
+    noZeroDfy = dfy[1:]
+    x = concentrations[1:]
+    p = np.polyfit(np.log10(concentrations[1:]), noZeroDfy, 1)  # creates equation for line of degree 1 best fit
+
+    plt.semilogx(x, p[0]*np.log10(x)+p[1], "--b")  # adjusts the life of best fit for x-axis log scale
+    plt.xscale('symlog', linthresh=1e-1, subs=[2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
+
 
 def plotPeaks(rawPeaks, concentrations, electrodeNames, frequency):
     plt.figure()  # creates figure

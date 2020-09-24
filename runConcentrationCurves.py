@@ -55,7 +55,7 @@ electrodesFolders = []
 for electrode in electrodeNames: # Gets the file path of all electrodes of interest
     electrodesFolders.append(os.path.join(os.getcwd(), electrode))
 
-rawPeaks = s.peaksMatrix(dataType, frequency,electrodesFolders,experimentConditions,df) # Calculates the peaks for every electrode
+rawPeaks = s.peaksMatrix(dataType, frequency,electrodesFolders,experimentConditions,df) # Calculates the peaks for every electrode (Dataframe)
 print('Raw Peaks\n',rawPeaks)
 
 
@@ -69,7 +69,7 @@ print('Normalized Change \n',normSignal)
 #
 
 averages = s.stats(normSignal)
-print(averages)
+print("averages\n", averages)
 print('\nStandard Error')
 print(str(averages.iloc[1]) + '\n')
 
