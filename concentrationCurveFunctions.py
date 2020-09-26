@@ -516,13 +516,13 @@ def plotConcentration(averages, concentrations, electrodeNames,frequency):
 
     noZeroDfy = dfy
     x = concentrations
-    x[0] = 0.0001
+    x[0] = 10**(-4)
     # x = np.asarray(x) +1
     y = noZeroDfy
-    y[0]=0.0001
+    y[0]=0.0000001
 
-    print(x)
-    print(y)
+    print(len(x), x)
+    print(len(y), y)
     p = np.polyfit(np.log10(x), y, 1)  # creates equation for line of degree 1 best fit
     polynomial = np.poly1d(p)
 
