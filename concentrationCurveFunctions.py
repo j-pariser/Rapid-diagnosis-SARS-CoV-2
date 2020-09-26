@@ -9,8 +9,6 @@ import os
 from scipy.signal import argrelmin
 from scipy.signal import savgol_filter
 import scipy
-import math
-
 
 """
 basicPeaks: the same as peaks() but specific for electrode 4 batch
@@ -514,13 +512,26 @@ def plotConcentration(averages, concentrations, electrodeNames,frequency):
     # plt.yticks(np.arange(0,90,10))
     # plt.xlim(0.75, 15000)
     plt.xlim(-0.01, 150)
+    ###--- bent line: plt.semilogx(x, p[0]*np.log(x)+p[1], "--b")  # adjusts the life of best fit for x-axis log scale
 
-    noZeroDfy = dfy[1:]
-    x = concentrations[1:]
-    p = np.polyfit(np.log10(concentrations[1:]), noZeroDfy, 1)  # creates equation for line of degree 1 best fit
+    noZeroDfy = dfy
+    x = concentrations
+    x[0] = 0.0001
+    # x = np.asarray(x) +1
+    y = noZeroDfy
+    y[0]=0.0001
 
-    plt.semilogx(x, p[0]*np.log10(x)+p[1], "--b")  # adjusts the life of best fit for x-axis log scale
-    plt.xscale('symlog', linthresh=1e-1, subs=[2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
+    print(x)
+    print(y)
+    p = np.polyfit(np.log10(x), y, 1)  # creates equation for line of degree 1 best fit
+    polynomial = np.poly1d(p)
+
+    log10_y_fit = polynomial(np.log10(x))
+
+    # y= p[1]*np.log(x)+p[0]
+    plt.plot(x, log10_y_fit, 'b-')
+
+    plt.xscale('symlog', linthresh=1e-3, subs=[1, 2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
 
 
 def plotPeaks(rawPeaks, concentrations, electrodeNames, frequency):
