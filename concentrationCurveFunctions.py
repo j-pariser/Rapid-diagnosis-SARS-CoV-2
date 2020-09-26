@@ -488,19 +488,18 @@ x-axis: 0 , 10^-6, 10^-5, 10^-4, 10^-3, 10^-2, 10^-1, 10^0 concentration
 what if just had the log space equal, but then renamed them?
 """
 def plotConcentration(averages, concentrations, electrodeNames,frequency):
-    print('-'*len('Inside plotConcentration') + "\nInside plotConcentration\n" + '-'*len('Inside plotConcentration'))
     print('\naverages:\n',averages, '\n')
     print('concentrations: ',concentrations, '\n')
     objects = list(averages.columns)  # gets column names
     dfy = list(averages.iloc[0, :])  # access row 1 of the data frame (the peak heights)
-    error = list(averages.iloc[1, :])
+    error = list(averages.iloc[1, :])  # access row 2 of the data frame (the std deviation)
     #x_pos = np.arange(len(objects))  # finds number of bars
     plt.figure()  # creates figure
     plt.rcParams['ytick.labelsize'] = 24
     plt.rcParams['xtick.labelsize'] = 24
 
-    colormap = plt.cm.plasma(.75) # change color map here!
-    plt.plot(concentrations, dfy, marker = 'o', markersize = '12', linestyle = '', color = colormap, markeredgecolor='k', markeredgewidth=1.0)  # plots graph
+    colormap = plt.cm.plasma(.75) # change color map here! Colormap set to plasma.
+    plt.plot(concentrations, dfy, marker = 'o', markersize = '10', linestyle = '', color = colormap, markeredgecolor='k', markeredgewidth=1.0)  # plots graph
     # plt.errorbar(concentrations, dfy, yerr = error, ecolor = 'k', linestyle = '', capsize = 3) # creates error bars
     plt.fill_between(concentrations, np.array(dfy)-np.array(error), np.array(dfy)+np.array(error), color=colormap, alpha=.2)
     plt.xlabel('Concentration S1 (fg/mL)', fontsize = '18')
@@ -511,28 +510,17 @@ def plotConcentration(averages, concentrations, electrodeNames,frequency):
     # plt.xscale('symlog', linthresh=1e-1, subs=[2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
     # plt.yticks(np.arange(0,90,10))
     # plt.xlim(0.75, 15000)
-    plt.xlim(-0.01, 150)
-    ###--- bent line: plt.semilogx(x, p[0]*np.log(x)+p[1], "--b")  # adjusts the life of best fit for x-axis log scale
+    # plt.xlim(-0.01, 150)
 
-    noZeroDfy = dfy
     x = concentrations
-    x[0] = 10**(-4)
-    # x = np.asarray(x) +1
-    y = noZeroDfy
-    y[0]=0.0000001
-
-    print(len(x), x)
-    print(len(y), y)
-    p = np.polyfit(np.log10(x), y, 1)  # creates equation for line of degree 1 best fit
+    x[0] = 10**(-9)  # replaces the zero point
+    y = dfy
+    p = np.polyfit(np.log(x), y, 1)  # creates equation for line of degree 1 best fit
     polynomial = np.poly1d(p)
-
-    log10_y_fit = polynomial(np.log10(x))
-
-    # y= p[1]*np.log(x)+p[0]
-    plt.plot(x, log10_y_fit, 'b-')
-
-    plt.xscale('symlog', linthresh=1e-3, subs=[1, 2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
-
+    log10_y_fit = polynomial(np.log(x))
+    plt.plot(x, log10_y_fit, 'b-', label="linear fit")
+    plt.xscale('log', subs=[2, 3, 4, 5, 6, 7, 8, 9])  # converts x scale to log
+    plt.xlim(1e-5, 1e3)
 
 def plotPeaks(rawPeaks, concentrations, electrodeNames, frequency):
     plt.figure()  # creates figure
